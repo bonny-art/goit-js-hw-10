@@ -1,0 +1,33 @@
+const API_KEY =
+  'live_ANXFBEcIM0yKus5fb58clof0MJOs4zLea5inllroiU2Lrmx56ZK8Y8l86jVTvJjp';
+const MAIN_URL = 'https://api.thecatapi.com/v1';
+
+function fetchBreeds() {
+  return fetch(`${MAIN_URL}/breeds`).then(resp => {
+    if (!resp.ok) {
+      throw new Error(resp.statusText || 'Some error happend');
+    }
+    return resp.json();
+  });
+}
+
+function fetchCatByBreed(breedId) {
+  const Params = new URLSearchParams({
+    breed_ids: breedId,
+  });
+
+  const options = {
+    headers: {
+      'x-api-key': API_KEY,
+    },
+  };
+
+  return fetch(`${MAIN_URL}/images/search?${Params}`, options).then(resp => {
+    if (!resp.ok) {
+      throw new Error(resp.statusText || 'Some error happend');
+    }
+    return resp.json();
+  });
+}
+
+export { fetchBreeds, fetchCatByBreed };
