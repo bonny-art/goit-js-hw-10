@@ -33,18 +33,12 @@ const elem = {
 elem.selector.classList.add('ss-hide');
 elem.error.classList.add('js-hide');
 
-// elem.selector.addEventListener(
-//   'focus',
-//   () => (elem.selector.selectedIndex = -1)
-// );
 elem.selector.addEventListener('change', handlerFindCat);
 
 fetchBreeds()
   .then(data => {
     elem.selector.innerHTML =
       `<option data-placeholder="true"></option>` + createSelectMarkup(data);
-
-    elem.loader.classList.add('js-hide');
 
     new SlimSelect({
       select: elem.selector,
@@ -57,8 +51,10 @@ fetchBreeds()
   })
   .catch(err => {
     Notify.failure('Oops! Something went wrong! Try reloading the page!');
-    elem.loader.classList.toggle('js-hide');
     console.log(err);
+  })
+  .finally(() => {
+    elem.loader.classList.add('js-hide');
   });
 
 function createSelectMarkup(arr) {
@@ -68,7 +64,7 @@ function createSelectMarkup(arr) {
 }
 
 function handlerFindCat(evt) {
-  elem.loader.classList.toggle('js-hide');
+  elem.loader.classList.remove('js-hide');
   elem.card.classList.add('js-hide');
   const id = evt.currentTarget.value;
 
@@ -79,22 +75,23 @@ function handlerFindCat(evt) {
 
       const markup = createCatMarkup(url, name, description, temperament);
       elem.card.innerHTML = markup;
-      elem.loader.classList.toggle('js-hide');
 
       elem.card.classList.remove('js-hide');
     })
     .catch(err => {
       Notify.failure('Oops! Something went wrong! Try reloading the page!');
-      elem.loader.classList.toggle('js-hide');
 
       console.log(err);
+    })
+    .finally(() => {
+      elem.loader.classList.add('js-hide');
     });
 }
 
 function createCatMarkup(url, name, description, temperament) {
   return `
         <div class="img-container">
-            <img class="img" src="${url}" />
+            <img class="img" src="${url}" alt="${name}" />
         </div>
         <div class="cat-caption">
             <h1 class="cat-name" >${name}</h1>
@@ -105,3 +102,7 @@ function createCatMarkup(url, name, description, temperament) {
         </div>
       `;
 }
+
+// TODO Add axios instead of fetch
+
+// TODO Move loader clothing to finally?
